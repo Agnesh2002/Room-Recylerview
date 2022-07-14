@@ -5,12 +5,12 @@ import androidx.room.Insert
 import androidx.room.Query
 
 @Dao
-interface Dao {
+interface RoomDao {
 
     @Insert
-    fun addUser(user: User)
+    fun putData(userData: UserData)
 
     @Query("select * from user_table")
-    fun getUsers(): List<User>
+    fun getData():List<UserData>
 
 }

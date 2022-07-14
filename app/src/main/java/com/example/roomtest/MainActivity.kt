@@ -4,9 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.room.Room
 import com.example.roomtest.databinding.ActivityMainBinding
-import java.util.logging.Logger.global
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,30 +19,43 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnAddUser.setOnClickListener(View.OnClickListener {
 
-            val db:MyDB = Room.databaseBuilder(applicationContext,MyDB::class.java,"userdb").allowMainThreadQueries().build()
-            var name:String = binding.etName.text.toString()
-            var email:String = binding.etEmail.text.toString()
-            var user = User(0,name,email)
-            db.dao().addUser(user)
-            Toast.makeText(this,"User added successfully",Toast.LENGTH_SHORT).show()
+            var uname = binding.etName.text.toString()
+            var mail = binding.etEmail.text.toString()
+
+            var db = Room.databaseBuilder(applicationContext, MyDatabase::class.java, "users_db").allowMainThreadQueries().build()
+            var userData = UserData(0,uname,mail)
+            db.accessDao().putData(userData)
+            Toast.makeText(applicationContext,"Data added successfully",Toast.LENGTH_SHORT).show()
+
+            var list: List<UserData> = db.accessDao().getData()
+
+            binding.recyclerView.layoutManager = LinearLayoutManager(this)
+            val adapter = CustomAdapter(list)
+            binding.recyclerView.adapter = adapter
 
         })
 
-        binding.btnShowUsers.setOnClickListener(View.OnClickListener {
+//        binding.btnShowUsers.setOnClickListener(View.OnClickListener {
+//
+//            val db = Room.databaseBuilder(applicationContext, MyDatabase::class.java, "users_db").allowMainThreadQueries().build()
+//            list = db.accessDao().getData()
+//
+//            for(user:UserData in list)
+//            {
+//                var id = user.id
+//                var name = user.username
+//                var email = user.email
+//                var data:String = binding.tvData.text.toString()
+//                binding.tvData.text = data+"\n"+id.toString()+" | "+name+" | "+email
+//
+//            }
+//
+//        })
 
-            val db:MyDB = Room.databaseBuilder(applicationContext,MyDB::class.java,"userdb").allowMainThreadQueries().build()
-            var arrayList:List<User> = db.dao().getUsers()
 
-            for (user:User in arrayList)
-            {
-                var id = user.id
-                var name = user.name
-                var email = user.email
-                var data:String = binding.tvData.text.toString()
-                binding.tvData.text = data+"\n"+id.toString()+" | "+name+" | "+email
-            }
 
-        })
+
+
 
     }
 }
